@@ -1,12 +1,16 @@
+from judge.network import *
 import socket
 
-class Net:
+class Protocol:
     def __init__(self, addr: str, port: int):
         self.addr = addr
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.running = True
-        self.buffer_size = 1024
+        self.running = False
+
+    def __del__(self):
+        self.socket.close()
+
     def Connect(self):
         self.running = True
         print(f'Trying to connect to {self.addr}:{self.port}')
@@ -17,13 +21,7 @@ class Net:
                 self.running = False
             except Exception as e:
                 continue
-        
-    def Recieve(self):
-        try:
-            self.response = self.socket.recv(self.buffer_size)
-        except Exception as e:
-            print(f'Exception during recieve {e}')
-    def GetResponse(self):
-        return self.response
-    def __del__(self):
-        self.socket.close()
+    def InitialParameters(self) -> Jsonable:
+        print('Waiting to recieve the initial message ...')
+        return recv_msg(self.socket)["data"]
+    

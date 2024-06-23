@@ -1,10 +1,10 @@
-from Net import Net
+from protocol import Protocol
+
 
 def main():
-    net = Net('localhost', 10000)
-    net.Connect()
-    net.Recieve()
-    print(net.GetResponse().decode("utf8"))
+    p = Protocol("localhost", 10000)
+    p.Connect()
+    print(p.InitialParameters())
         
 
 if __name__ == "__main__":
