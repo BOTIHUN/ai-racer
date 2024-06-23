@@ -21,7 +21,9 @@ class Protocol:
                 self.running = False
             except Exception as e:
                 continue
-    def InitialParameters(self) -> Jsonable:
-        print('Waiting to recieve the initial message ...')
+    def GetData(self):
         return recv_msg(self.socket)["data"]
+    def SendData(self, data: str):
+        send_data(self.socket, data)
+    
     
