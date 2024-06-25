@@ -31,6 +31,8 @@ class Sensor:
         self.environment = Environment(temp)
         
     def Sense(self, input: str):
+        if str == "~~~END~~~":
+            return False
         lines = input.splitlines()
         self.physics = Physics(lines[0].split())
         lines = lines[1:]
@@ -38,4 +40,5 @@ class Sensor:
         lines = lines[self.environment.num_of_players:]
         grid = lines[:2 * self.environment.vis_radius + 1]
         self.vision = Vision(players, grid)
+        return True
         
