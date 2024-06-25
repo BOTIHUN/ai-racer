@@ -21,6 +21,7 @@ def main():
         state.add_global(sensor.physics.x, sensor.physics.y)
         p.SendData(f'{action[0]} {action[1]}\n')
 
-
+    print(state.player_global_visited)
+    
 if __name__ == "__main__":
     main()
