@@ -14,13 +14,12 @@ def main():
     bfs_state =  BFS_State()
     
     while True:
-        i = p.GetData()
-        if not sensor.Sense(str(i)):
+        if not sensor.Sense(str(p.GetData())):
             break
         bfs_state.update_position(sensor.physics.x, sensor.physics.y)
         bfs_state.update_velocity(sensor.physics.vx, sensor.physics.vy)
         bfs_state.update_global_grid(np.array(sensor.vision.grid))
-        bfs_state.add_to_visited(sensor.physics.x, sensor.physics.y)
+        #bfs_state.add_to_visited(sensor.physics.x, sensor.physics.y)
         bfs_state.R = sensor.environment.vis_radius
         
         action = choose_action(sensor.physics.x, sensor.physics.y,
