@@ -1,7 +1,14 @@
+from sensor import *
+
 class State:
-    def __init__(self, prev_x, prev_y):
-        self.prev_x = prev_x
-        self.prev_y = prev_y
-    def Update(self, x, vx, ax,y, vy, ay):
-        self.prev_x = x + vx + ax
-        self.prev_y = y + vy + ay
+    def __init__(self, sensor: Sensor):
+        self.player_global_visited = set()
+        self.sensor = sensor
+    def add_global(self, x, y):
+        self.player_global_visited.add((x,y))
+    def is_visited(self, x, y):
+        return (x,y) in self.player_global_visited
+    def to_global(self, x, y):
+        gx = self.sensor.physics.x + (x - self.sensor.environment.vis_radius)
+        gy = self.sensor.physics.y + (y - self.sensor.environment.vis_radius)
+        return gx,gy
