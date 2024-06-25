@@ -8,16 +8,16 @@ from state import *
 def is_valid_position(x, y, state: BFS_State):
     return not state.is_wall(x, y)
 
-def bfs_find_furthest_unexplored(state: BFS_State):
-    queue = deque([(state.px, state.py)])
+def bfs_find_furthest_unexplored(px, py,state: BFS_State):
+    queue = deque([(px, py)])
     visited = set()
-    visited.add((state.px, state.py))
+    visited.add((px, py))
     
-    furthest_node = (state.px, state.py)
+    furthest_node = (px, py)
     
     while queue:
         cx, cy = queue.popleft()
-        
+        print(f'{cx},{cy}')
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = cx + dx, cy + dy
             if (nx, ny) not in visited and not state.is_visited(nx, ny) and is_valid_position(nx, ny, state):
@@ -52,7 +52,8 @@ def determine_acceleration(target_x, target_y, x, y, vx, vy):
     return ax, ay
 
 def choose_action(px, py, vx, vy, grid, state: BFS_State):
-    target = bfs_find_furthest_unexplored(state)
+    target = bfs_find_furthest_unexplored(state.R, state.R,state)
+    print(target)
     if target:
         target_x, target_y = target
         ax, ay = determine_acceleration(target_x, target_y, px, py, vx, vy)

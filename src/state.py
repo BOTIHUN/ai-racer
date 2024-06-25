@@ -59,7 +59,9 @@ class BFS_State:
                 if vision_grid[dx + self.R, dy + self.R] != NOT_VISIBLE:
                     self.global_grid[(gx, gy)] = vision_grid[dx + self.R, dy + self.R]
     def is_wall(self, x, y):
-        return self.global_grid.get((x, y), NOT_VISIBLE) == WALL
+        cell_value = self.global_grid.get((x, y), EMPTY)
+        return cell_value == WALL
 
     def is_goal(self, x, y):
-        return self.global_grid.get((x, y), NOT_VISIBLE) == GOAL
+        cell_value = self.global_grid.get((x, y), EMPTY)
+        return cell_value == GOAL
