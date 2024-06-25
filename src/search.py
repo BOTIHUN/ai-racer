@@ -63,44 +63,66 @@ def reconstruct_path(came_from, current):
     return total_path
 
 def heuristic(x, y, grid):
-    if grid[x, y] == NOT_VISIBLE:
-        return -100  # Strong preference for exploring unknown
+    priority = 0
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         nx, ny = x + dx, y + dy
-        if 0 <= nx < grid.shape[0] and 0 <= ny < grid.shape[1] and grid[nx, ny] == NOT_VISIBLE:
-            return -50  # Preference for adjacent to unknown
-    return 0  # Neutral for other nodes
+        if 0 <= nx < grid.shape[0] and 0 <= ny < grid.shape[1]:
+            if grid[nx, ny] == NOT_VISIBLE:
+                priority -= 1
+            elif grid[nx, ny] == EMPTY:
+                priority -= 0.5
+    return priority
 
 
 def a_star_search(grid, start, state: State):
+    # Initialize structures
     pq = []
-    heapq.heappush(pq, (0, start))  # (priority, (x, y))
-    g_score = {start: 0}
+    heapq.heappush(pq, (0, start))
     came_from = {}
+    g_score = {start: 0}
+    max_f_score_node = (0, start)  # To track the node with maximum f_score
     
     while pq:
-        _, (cx, cy) = heapq.heappop(pq)
+        current_f, (cx, cy) = heapq.heappop(pq)
         
+        # Check if we have reached the goal
         if grid[cx, cy] == GOAL:
-            return reconstruct_path(came_from, (cx, cy))
+            path = []
+            while (cx, cy) in came_from:
+                path.append((cx, cy))
+                cx, cy = came_from[(cx, cy)]
+            path.reverse()
+            return path
+
+        if max_f_score_node[0] == 0:
+            max_f_score_node = (current_f, (cx, cy))
+        if current_f > max_f_score_node[0]:
+            max_f_score_node = (current_f, (cx, cy))
         
+        # Explore neighbors
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = cx + dx, cy + dy
-            if not is_valid_position(nx, ny, grid):
-                continue
-            gx, gy = state.to_global(nx - start[0], ny - start[1])
-            if state.is_visited(gx, gy):
-                continue
-            
-            tentative_g_score = g_score[(cx, cy)] + 1
-            if (nx, ny) not in g_score or tentative_g_score < g_score[(nx, ny)]:
-                came_from[(nx, ny)] = (cx, cy)
-                g_score[(nx, ny)] = tentative_g_score
-                f_score = tentative_g_score + heuristic(nx, ny, grid)
-                heapq.heappush(pq, (f_score, (nx, ny)))
-                print("after push")
+            if is_valid_position(nx, ny, grid):
+                tentative_g_score = g_score[(cx, cy)] + 1
+                if (nx, ny) not in g_score or tentative_g_score < g_score[(nx, ny)]:
+                    came_from[(nx, ny)] = (cx, cy)
+                    g_score[(nx, ny)] = tentative_g_score
+                    f_score = tentative_g_score + heuristic(nx, ny, grid)
+                    gx, gy = state.to_global(nx - start[0], ny - start[1])
+                    if state.is_visited(gx, gy):
+                        f_score += 0.1
+                    heapq.heappush(pq, (f_score, (nx, ny)))
     
-    return None  # No path found
+    if max_f_score_node[0] != 0:
+        path = []
+        cx, cy = max_f_score_node[1]
+        while (cx, cy) in came_from:
+            path.append((cx, cy))
+            cx, cy = came_from[(cx, cy)]
+        path.reverse()
+        return path
+    else:
+        return None  # No path found with a good f_score
 
 def determine_acceleration_a_star(path, vx, vy):
     if len(path) < 2:
@@ -116,7 +138,6 @@ def determine_acceleration_a_star(path, vx, vy):
     ay = max(-1, min(1, ay))
     
     return ax, ay
-
 
 def choose_action(x, y, vx, vy, grid, state: State):
     path = a_star_search(grid, (x, y), state)
