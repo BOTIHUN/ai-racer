@@ -30,7 +30,7 @@ def bfs_find_nearest_target(grid, start, state: State):
                 visited.add((nx, ny))
                 queue.append((nx, ny))
                 
-    return None  # No target found
+    return max(visited, key=lambda pos: abs(pos[0] - start[0]) + abs(pos[1] - start[1]))
 
 def determine_acceleration(target_x, target_y, x, y, vx, vy, grid):
     ax, ay = 0, 0
@@ -43,24 +43,24 @@ def determine_acceleration(target_x, target_y, x, y, vx, vy, grid):
         ay = 1
     elif target_y < y + vy:
         ay = -1
-    
-    next_x = x + vx + ax
-    next_y = y + vy + ay
-    if grid[next_x, next_y] == WALL:
-        # Avoid accelerating towards a wall
-        if ax != 0:
-            ax = -1 * ax
-        if ay != 0:
-            ay = -1 * ay
         
     return ax, ay
+
+def get_possible_actions():
+    return [-1, 0, 1]
+
+def get_next_position(x, y, vx, vy, ax, ay):
+    next_vx = vx + ax
+    next_vy = vy + ay
+    next_x = x + next_vx
+    next_y = y + next_vy
+    return next_x, next_y, next_vx, next_vy
 
 def choose_action(x, y, vx, vy, grid, state: State):
     target = bfs_find_nearest_target(grid, (x, y), state)
     if target:
         target_x, target_y = target
         ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy, grid)
-        
         return ax,ay
     else:
         return 0, 0
