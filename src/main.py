@@ -16,7 +16,6 @@ def main():
         if not sensor.Sense(str(p.GetData())):
             break
         
-        
         action = choose_action(sensor.environment.vis_radius, sensor.environment.vis_radius,
                                sensor.physics.vx, sensor.physics.vy,
                                np.array(sensor.vision.grid), state)
@@ -25,6 +24,6 @@ def main():
         p.SendData(f'{action[0]} {action[1]}\n')
         print(action)
 
-    pprint(bfs_state.global_grid)
+    print(state.player_global_visited)
 if __name__ == "__main__":
     main()

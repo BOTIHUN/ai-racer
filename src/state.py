@@ -18,12 +18,6 @@ class State:
         return (x,y) in self.player_global_visited
     def to_global(self, local_dx, local_dy):
         return (self.sensor.physics.x + local_dx, self.sensor.physics.y + local_dy)
-    def wait(self):
-        self.idle_count = self.idle_count + 1
-        if self.waiting_long():
-            self.idle_count = 0
-    def waiting_long(self):
-        return self.idle_count > 6
 
 class BFS_State:
     def __init__(self, px = 0, py = 0, vx = 0, vy = 0, R = 0):

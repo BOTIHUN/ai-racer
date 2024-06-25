@@ -6,7 +6,6 @@ def is_valid_position(x, y, grid):
     return 0 <= x < grid.shape[0] and 0 <= y < grid.shape[1] and grid[x, y] != WALL
 
 def bfs_find_nearest_target(grid, start, state: State):
-    #rows, cols = grid.shape
     queue = deque([start])
     visited = set()
     visited.add(start)
