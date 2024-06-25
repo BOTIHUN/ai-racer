@@ -12,7 +12,8 @@ def main():
         print(i)
         if not sensor.Sense(str(i)):
             break
-        action = choose_action(sensor.physics.x, sensor.physics.y,
+        print(vars(sensor.environment))
+        action = choose_action(sensor.environment.vis_radius, sensor.environment.vis_radius,
                         sensor.physics.vx, sensor.physics.vy,
                         np.array(sensor.vision.grid))
         print(f'{action[0]} {action[1]}\n')
