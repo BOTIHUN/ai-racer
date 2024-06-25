@@ -19,29 +19,18 @@ def bfs_find_nearest_target(grid, start, state: State):
     
     while queue:
         cx, cy = queue.popleft()
-        
+            
         if grid[cx, cy] == NOT_VISIBLE or grid[cx, cy] == GOAL:
             return (cx, cy)
         
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = cx + dx, cy + dy
-            
             gx, gy = state.to_global(nx - start[0], ny - start[1])
             if is_valid_position(nx, ny, grid) and (nx, ny) not in visited and not state.is_visited(gx, gy):
                 visited.add((nx, ny))
                 queue.append((nx, ny))
                 
     return None  # No target found
-
-def get_possible_actions():
-    return [-1, 0, 1]
-
-def get_next_position(x, y, vx, vy, ax, ay):
-    next_vx = vx + ax
-    next_vy = vy + ay
-    next_x = x + next_vx
-    next_y = y + next_vy
-    return next_x, next_y, next_vx, next_vy
 
 def determine_acceleration(target_x, target_y, x, y, vx, vy, grid):
     ax, ay = 0, 0
@@ -54,6 +43,15 @@ def determine_acceleration(target_x, target_y, x, y, vx, vy, grid):
         ay = 1
     elif target_y < y + vy:
         ay = -1
+    
+    next_x = x + vx + ax
+    next_y = y + vy + ay
+    if grid[next_x, next_y] == WALL:
+        # Avoid accelerating towards a wall
+        if ax != 0:
+            ax = -1 * ax
+        if ay != 0:
+            ay = -1 * ay
         
     return ax, ay
 

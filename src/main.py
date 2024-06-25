@@ -19,6 +19,7 @@ def main():
                         sensor.physics.vx, sensor.physics.vy,
                         np.array(sensor.vision.grid), state)
         p.SendData(f'{action[0]} {action[1]}\n')
+        print(action)
 
     print(state.player_global_visited)
     
