@@ -1,12 +1,6 @@
 import numpy as np
 from collections import deque
-from state import State
-
-EMPTY = 0
-WALL = -1
-START = 1
-NOT_VISIBLE = 3
-GOAL = 100
+from state import *
 
 def is_valid_position(x, y, grid):
     return 0 <= x < grid.shape[0] and 0 <= y < grid.shape[1] and grid[x, y] != WALL
