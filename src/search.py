@@ -43,7 +43,7 @@ def get_next_position(x, y, vx, vy, ax, ay):
     next_y = y + next_vy
     return next_x, next_y, next_vx, next_vy
 
-def determine_acceleration(target_x, target_y, x, y, vx, vy):
+def determine_acceleration(target_x, target_y, x, y, vx, vy, grid):
     ax, ay = 0, 0
     if target_x > x + vx:
         ax = 1
@@ -61,7 +61,7 @@ def choose_action(x, y, vx, vy, grid, state: State):
     target = bfs_find_nearest_target(grid, (x, y), state)
     if target:
         target_x, target_y = target
-        ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy)
+        ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy, grid)
         
         return ax,ay
     else:

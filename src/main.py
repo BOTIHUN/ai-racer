@@ -12,7 +12,6 @@ def main():
     
     while True:
         i = p.GetData()
-        print(i)
         if not sensor.Sense(str(i)):
             break
         state.add_global(sensor.physics.x, sensor.physics.y)
