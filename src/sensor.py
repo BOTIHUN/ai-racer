@@ -31,7 +31,7 @@ class Sensor:
         self.environment = Environment(temp)
         
     def Sense(self, input: str):
-        if str == "~~~END~~~":
+        if input == "~~~END~~~\n":
             return False
         lines = input.splitlines()
         self.physics = Physics(lines[0].split())

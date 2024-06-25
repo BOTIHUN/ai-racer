@@ -8,7 +8,9 @@ def main():
     p.Connect()
     sensor = Sensor(p.GetData())
     while True:
-        if not sensor.Sense(p.GetData()):
+        i = p.GetData()
+        print(i)
+        if not sensor.Sense(str(i)):
             break
         action = choose_action(sensor.physics.x, sensor.physics.y,
                         sensor.physics.vx, sensor.physics.vy,
