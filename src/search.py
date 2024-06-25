@@ -76,12 +76,12 @@ def determine_acceleration(target_x, target_y, x, y, vx, vy):
     return ax, ay
 
 def choose_action(x, y, vx, vy, grid):
-    target = bfs_find_furthest_valid_node(grid, (x, y))
+    target = bfs_find_nearest_target(grid, (x, y))
     if target:
         target_x, target_y = target
         ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy)
-
-        return ax, ay
+        
+        return ax,ay
     else:
         return 0, 0
 
