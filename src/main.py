@@ -15,10 +15,10 @@ def main():
         print(i)
         if not sensor.Sense(str(i)):
             break
+        state.add_global(sensor.physics.x, sensor.physics.y)
         action = choose_action(sensor.environment.vis_radius, sensor.environment.vis_radius,
                         sensor.physics.vx, sensor.physics.vy,
                         np.array(sensor.vision.grid), state)
-        state.add_global(sensor.physics.x, sensor.physics.y)
         p.SendData(f'{action[0]} {action[1]}\n')
 
     print(state.player_global_visited)
