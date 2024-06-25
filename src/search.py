@@ -25,7 +25,12 @@ def bfs_find_nearest_target(grid, start, state: State):
         
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = cx + dx, cy + dy
-            print(f'nx: {nx}, ny: {ny}')
+            dis_from_start_x = start[0] - nx
+            dis_from_start_y = start[1] - ny
+            gx, gy = state.to_global(dis_from_start_x, dis_from_start_y)
+            if state.is_visited(gx, gy):
+                continue
+            
             if is_valid_position(nx, ny, grid) and (nx, ny) not in visited:
                 visited.add((nx, ny))
                 queue.append((nx, ny))

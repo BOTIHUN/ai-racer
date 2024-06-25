@@ -8,7 +8,5 @@ class State:
         self.player_global_visited.add((x,y))
     def is_visited(self, x, y):
         return (x,y) in self.player_global_visited
-    def to_global(self, x, y):
-        gx = self.sensor.physics.x + (x - self.sensor.environment.vis_radius)
-        gy = self.sensor.physics.y + (y - self.sensor.environment.vis_radius)
-        return gx,gy
+    def to_global(self, local_dx, local_dy):
+        return (self.sensor.physics.x + local_dx, self.sensor.physics.y + local_dy)
