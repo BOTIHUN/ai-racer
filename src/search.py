@@ -40,7 +40,7 @@ def get_next_position(x, y, vx, vy, ax, ay):
     next_y = y + next_vy
     return next_x, next_y, next_vx, next_vy
 
-def determine_acceleration(target_x, target_y, x, y, vx, vy):
+def determine_acceleration(target_x, target_y, x, y, vx, vy, prev_x, prev_y):
     ax, ay = 0, 0
     if target_x > x + vx:
         ax = 1
@@ -52,14 +52,19 @@ def determine_acceleration(target_x, target_y, x, y, vx, vy):
     elif target_y < y + vy:
         ay = -1
     
+    if prev_x is not None and prev_y is not None:
+        if (x + vx + ax, y + vy + ay) == (prev_x, prev_y):
+            ax, ay = 0, 0
+    
     return ax, ay
 
-def choose_action(x:int, y:int, vx:int, vy:int, grid : np.array):
+def choose_action(x, y, vx, vy, prev_x, prev_y, grid):
     target = bfs_find_nearest_target(grid, (x, y))
     if target:
         target_x, target_y = target
-        ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy)
+        ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy, prev_x, prev_y)
         return ax, ay
     else:
-        return 0, 0  # No valid target found, stay in place
+        return 0, 0
+
 
