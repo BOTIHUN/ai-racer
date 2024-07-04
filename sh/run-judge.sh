@@ -4,4 +4,4 @@ cd ../
 
 PYTHON=./.venv/bin/python3
 
-$PYTHON ./src/judge/run.py --replay_file replay config.json 1
+$PYTHON ./src/judge/run.py --replay_file replay --output_file output config.json 1

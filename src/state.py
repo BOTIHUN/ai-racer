@@ -12,6 +12,7 @@ class State:
         self.player_global_visited = set()
         self.sensor = sensor
         self.player_last_acc = (0,0)
+        self.f_maps = list()
     def add_global(self, x, y):
         self.player_global_visited.add((x,y))
     def is_visited(self, x, y):

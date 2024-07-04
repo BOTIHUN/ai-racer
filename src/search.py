@@ -3,6 +3,7 @@ from collections import deque
 from state import *
 import heapq
 
+
 def is_valid_position(x, y, grid):
     return 0 <= x < grid.shape[0] and 0 <= y < grid.shape[1] and grid[x, y] != WALL
 
@@ -62,15 +63,21 @@ def reconstruct_path(came_from, current):
     total_path.reverse()
     return total_path
 
-def heuristic(x, y, grid):
+def heuristic(x, y, grid, state: State, start):
     priority = 0
+    Gx, Gy = state.to_global(x - start[0], y - start[1])
+    if state.is_visited(Gx, Gy):
+        priority -= 20
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         nx, ny = x + dx, y + dy
         if 0 <= nx < grid.shape[0] and 0 <= ny < grid.shape[1]:
+            gx, gy = state.to_global(nx - start[0], ny - start[1])
+            if state.is_visited(gx, gy):
+                priority -= 20
             if grid[nx, ny] == NOT_VISIBLE:
-                priority -= 1
+                priority += 1
             elif grid[nx, ny] == EMPTY:
-                priority -= 0.5
+                priority += 0.5
     return priority
 
 
@@ -81,6 +88,8 @@ def a_star_search(grid, start, state: State):
     came_from = {}
     g_score = {start: 0}
     max_f_score_node = (0, start)  # To track the node with maximum f_score
+    heur_map = {}
+    f_map = {}
     
     while pq:
         current_f, (cx, cy) = heapq.heappop(pq)
@@ -107,12 +116,17 @@ def a_star_search(grid, start, state: State):
                 if (nx, ny) not in g_score or tentative_g_score < g_score[(nx, ny)]:
                     came_from[(nx, ny)] = (cx, cy)
                     g_score[(nx, ny)] = tentative_g_score
-                    f_score = tentative_g_score + heuristic(nx, ny, grid)
+                    heur = heuristic(nx, ny, grid, state, start)
+                    heur_map[(nx, ny)] = heur
+                    f_score = tentative_g_score + heur
+                    f_map[(nx, ny)] = f_score;
                     gx, gy = state.to_global(nx - start[0], ny - start[1])
                     if state.is_visited(gx, gy):
-                        f_score += 0.1
+                        f_score -= 20 * tentative_g_score
                     heapq.heappush(pq, (f_score, (nx, ny)))
-    
+
+    print(f'heuristics neighbour map: {heur_map}')
+    print(f'f_score neighbour map: {f_map}')
     if max_f_score_node[0] != 0:
         path = []
         cx, cy = max_f_score_node[1]
@@ -120,7 +134,10 @@ def a_star_search(grid, start, state: State):
             path.append((cx, cy))
             cx, cy = came_from[(cx, cy)]
         path.reverse()
-        return path
+        #path.append(start)
+        #path.append((cx, cy))
+        print(f'the maximum f_score node: {cx}, {cy} : {max_f_score_node[0]}')
+        return path, f_map
     else:
         return None  # No path found with a good f_score
 
@@ -130,6 +147,10 @@ def determine_acceleration_a_star(path, vx, vy):
     
     next_x, next_y = path[1]
     current_x, current_y = path[0]
+
+    print(f'next_x {next_x}, next_y {next_y}')
+    print(f'current_x {current_x}, current_y {current_y}')
+    print(f'path {path}')
     
     ax = next_x - current_x - vx
     ay = next_y - current_y - vy
@@ -140,11 +161,12 @@ def determine_acceleration_a_star(path, vx, vy):
     return ax, ay
 
 def choose_action(x, y, vx, vy, grid, state: State):
-    path = a_star_search(grid, (x, y), state)
+    path, f_map = a_star_search(grid, (x, y), state)
     if path:
         #target_x, target_y = target
         #ax, ay = determine_acceleration(target_x, target_y, x, y, vx, vy, state)
         ax, ay = determine_acceleration_a_star(path, vx, vy)
+        state.f_maps.append(f_map)
         return ax,ay
     else:
         return 0, 0
